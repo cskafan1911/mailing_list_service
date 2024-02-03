@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'clients',
     'mailing',
     'log',
+    'blog',
 
 ]
 

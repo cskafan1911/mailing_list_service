@@ -1,7 +1,8 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<a href="{% url 'mailing:mailing_list' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary mb-5">Мои рассылки</a>
+<a href="{% url 'mailing:mailing_list' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary mb-5">Мои
+    рассылки</a>
 <form method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-3"></div>
@@ -26,7 +27,6 @@
 
     </div>
 </form>
-
 
 
 {% endblock %}

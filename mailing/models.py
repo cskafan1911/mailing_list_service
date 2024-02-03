@@ -32,7 +32,7 @@ class Mailing(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование рассылки', **NULLABLE)
     time_start = models.DateTimeField(verbose_name='Время начала')
     time_stop = models.DateTimeField(verbose_name='Время окончания')
-    frequency = models.CharField(max_length=5, choices=FREQUENCY_CHOICES, default=WEEK,
+    frequency = models.CharField(max_length=12, choices=FREQUENCY_CHOICES, default=WEEK,
                                  verbose_name='Периодичность рассылки')
     status_mailing = models.CharField(max_length=10, choices=STATUS_CHOICES, default=COMPLETED,
                                       verbose_name='Статус рассылки')
@@ -40,7 +40,6 @@ class Mailing(models.Model):
     def __str__(self):
         """
         Строковое представление рассылки
-        :return: Имя пользователя, имя рассылки, статус рассылки, периодичность рассылки
         """
         return f'{self.user_creator} - {self.name} ({self.status_mailing} - {self.frequency})'
 
@@ -60,7 +59,7 @@ class Message(models.Model):
 
     def __str__(self):
         """
-        Строкове представление модели Message.
+        Строковое представление модели Message.
         """
         return f'Сообщение {self.subject} для рассылки {self.message_for_mailing}'
 

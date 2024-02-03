@@ -32,12 +32,11 @@
                 <div class="card-body">
                     {{ message_formset.management_form }}
                     {% for form in message_formset.forms %}
-
                     {{ form.as_table }}
                     {% if not forloop.last %}
                     <hr>
                     <div class="card-header">
-                        Новое сообщение
+                        Сообщение рассылки
                     </div>
                     {% endif %}
                     {% endfor %}
