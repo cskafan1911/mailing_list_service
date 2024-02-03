@@ -9,8 +9,8 @@ class MailingAdmin(admin.ModelAdmin):
     Класс для настройки панели администратора модели Clients.
     """
 
-    list_display = ('user', 'name', 'time_start', 'time_stop', 'frequency', 'status_mailing')
-    list_filter = ('user', 'status_mailing', 'frequency')
+    list_display = ('user_creator', 'name', 'time_start', 'time_stop', 'frequency', 'status_mailing')
+    list_filter = ('user_creator', 'status_mailing', 'frequency')
 
 
 @admin.register(Message)
