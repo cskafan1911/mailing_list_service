@@ -46,13 +46,13 @@
     <div class="logo">
         <a href="{% url 'index' %}">
             <img width="46" height="46" src="media/png-transparent-email-letter-mail-message-essential-shift-icon.png"
-                 alt="Unisender">
+                 alt="mailing_service">
         </a>
     </div>
     {% if user.is_authenticated %}
     <nav class="my-2 my-md-1 mr-md-3">
         <a href="{% url 'mailing:mailing_create' %}" class="p-2 text-dark">Создать рассылку</a>
-        <a href="#" class="p-2 text-dark">Статьи</a>
+        <a href="{% url 'blog:blog_list' %}" class="p-2 text-dark">Статьи</a>
         <a href="{% url 'users:profile' %}" class="p-2 text-dark">Мой профиль</a>
         <a href="{% url 'users:logout' %}" class="p-2 text-dark">Выйти</a>
     </nav>
