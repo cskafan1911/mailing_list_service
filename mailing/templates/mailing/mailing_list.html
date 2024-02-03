@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Название рассылки</th>
+        <th scope="col">Время начала</th>
+        <th scope="col">Время окончания</th>
+        <th scope="col">Периодичность</th>
+        <th scope="col">Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+    <tr>
+
+        <th scope="row">{{ forloop.counter }}</th>
+        <td><a href="{% url 'mailing:mailing_detail' object.pk %}">{{ object.name }}</a></td>
+        <td>{{ object.time_start }}</td>
+        <td>{{ object.time_stop }}</td>
+        <td>{{ object.frequency }}</td>
+        <td>{{ object.status_mailing }}</td>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

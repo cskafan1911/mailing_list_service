@@ -16,7 +16,7 @@ class Clients(models.Model):
     comment = models.CharField(max_length=300, verbose_name='Комментарий клиента', **NULLABLE)
     date_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления', **NULLABLE)
 
-    mailing = models.ForeignKey('mailing.Mailing', on_delete=models.CASCADE,
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE,
                                 verbose_name='Рассылка')
 
     def __str__(self):
