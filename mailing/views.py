@@ -1,3 +1,5 @@
+import pytz
+import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import inlineformset_factory
 from django.shortcuts import render
@@ -6,8 +8,10 @@ from django.views.generic import CreateView, ListView, UpdateView, DetailView, D
 
 from clients.forms import ClientsForm
 from clients.models import Clients
+from log.models import Log
 from mailing.forms import MailingForm, MessageForm
 from mailing.models import Mailing, Message
+from mailing.services import check_status_mailing
 from users.models import Users
 
 
@@ -26,17 +30,17 @@ class MailingListView(ListView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):
-        """
-        Метод получает информацию о рассылках пользователя.
-        """
-        context_data = super().get_context_data(**kwargs)
-
-        mailing_item = Users.objects.get(pk=self.kwargs.get('pk'))
-        context_data['mailing_pk'] = mailing_item.pk
-        context_data['title'] = f'Ваши рассылки'
-
-        return context_data
+    # def get_context_data(self, **kwargs):
+    #     """
+    #     Метод получает информацию о рассылках пользователя.
+    #     """
+    #     context_data = super().get_context_data(**kwargs)
+    #
+    #     mailing_item = Users.objects.get(pk=self.kwargs.get('pk'))
+    #     context_data['mailing_pk'] = mailing_item.pk
+    #     context_data['title'] = f'Ваши рассылки'
+    #
+    #     return context_data
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -65,13 +69,15 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         ClientsFormset = context_data['clients_formset']
         self.object = form.save()
         self.object.user_creator = self.request.user
+
         if MessageFormset.is_valid() and ClientsFormset.is_valid():
             MessageFormset.instance = self.object
             MessageFormset.save()
             ClientsFormset.instance = self.object
             ClientsFormset.save()
+            self.object.status_mailing = check_status_mailing(self.object)
         else:
-            return self.form_valid(form)
+            return self.form_invalid(form)
 
         return super().form_valid(form)
 
@@ -117,11 +123,12 @@ class MailingUpdateView(LoginRequiredMixin ,UpdateView):
         self.object.user_creator = self.request.user
         if MessageFormset.is_valid() and ClientsFormset.is_valid():
             MessageFormset.instance = self.object
-            ClientsFormset.instance = self.object
             MessageFormset.save()
+            ClientsFormset.instance = self.object
             ClientsFormset.save()
+            self.object.status_mailing = check_status_mailing(self.object)
         else:
-            return self.form_valid(form)
+            return self.form_invalid(form)
 
         return super().form_valid(form)
 
@@ -156,7 +163,8 @@ class MailingDetailView(DetailView):
 
         context_data = super().get_context_data(**kwargs)
         context_data['message'] = Message.objects.filter(message_for_mailing=self.object).last()
-        context_data['client'] = Clients.objects.filter(mailing=self.object).last()
+        context_data['client'] = Clients.objects.filter(mailing=self.object).all()
+        context_data['log'] = Log.objects.filter(mailing=self.object).all()
 
         return context_data
 
@@ -167,4 +175,4 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     """
 
     model = Mailing
-    success_url = reverse_lazy('main:index')
+    success_url = reverse_lazy('index')
