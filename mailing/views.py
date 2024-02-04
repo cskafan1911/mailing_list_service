@@ -2,7 +2,8 @@ import pytz
 import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import inlineformset_factory
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 
@@ -11,7 +12,7 @@ from clients.models import Clients
 from log.models import Log
 from mailing.forms import MailingForm, MessageForm
 from mailing.models import Mailing, Message
-from mailing.services import check_status_mailing
+from mailing.services import check_status_mailing, send_email
 from users.models import Users
 
 
@@ -29,18 +30,6 @@ class MailingListView(ListView):
         queryset = queryset.filter(user_creator=self.request.user)
 
         return queryset
-
-    # def get_context_data(self, **kwargs):
-    #     """
-    #     Метод получает информацию о рассылках пользователя.
-    #     """
-    #     context_data = super().get_context_data(**kwargs)
-    #
-    #     mailing_item = Users.objects.get(pk=self.kwargs.get('pk'))
-    #     context_data['mailing_pk'] = mailing_item.pk
-    #     context_data['title'] = f'Ваши рассылки'
-    #
-    #     return context_data
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -163,8 +152,8 @@ class MailingDetailView(DetailView):
 
         context_data = super().get_context_data(**kwargs)
         context_data['message'] = Message.objects.filter(message_for_mailing=self.object).last()
-        context_data['client'] = Clients.objects.filter(mailing=self.object).all()
-        context_data['log'] = Log.objects.filter(mailing=self.object).all()
+        context_data['clients'] = Clients.objects.filter(mailing=self.object).all()
+        context_data['logs'] = Log.objects.filter(mailing=self.object).all()
 
         return context_data
 
@@ -176,3 +165,27 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
 
     model = Mailing
     success_url = reverse_lazy('index')
+
+
+def start_mailing(request, pk):
+    """
+    Функция запускает рассылку.
+    """
+    mailing = Mailing.objects.get(pk=pk)
+    if mailing.user_creator == request.user:
+        send_email(mailing)
+        return redirect(request.META.get('HTTP_REFERER'))
+    raise Http404
+
+
+def stop_mailing(request, pk):
+    """
+    Функция отключает рассылку.
+    """
+    mailing = Mailing.objects.get(pk=pk)
+    if mailing.user_creator == request.user:
+        mailing.status = 'COMPLETED'
+        mailing.save()
+        return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        raise Http404

@@ -1,4 +1,5 @@
 {% load static %}
+{% load my_tags %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -45,7 +46,7 @@
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
     <div class="logo">
         <a href="{% url 'index' %}">
-            <img width="46" height="46" src="media/png-transparent-email-letter-mail-message-essential-shift-icon.png"
+            <img width="46" height="46" src="{% mediapath 'png-transparent-email-letter-mail-message-essential-shift-icon.png' %}"
                  alt="mailing_service">
         </a>
     </div>
@@ -53,12 +54,13 @@
     <nav class="my-2 my-md-1 mr-md-3">
         <a href="{% url 'mailing:mailing_create' %}" class="p-2 text-dark">Создать рассылку</a>
         <a href="{% url 'blog:blog_list' %}" class="p-2 text-dark">Статьи</a>
+        <a href="{% url 'mailing:mailing_list' %}" class="p-2 text-dark">Рассылки</a>
         <a href="{% url 'users:profile' %}" class="p-2 text-dark">Мой профиль</a>
         <a href="{% url 'users:logout' %}" class="p-2 text-dark">Выйти</a>
     </nav>
     {% else %}
-    <a href="{% url 'users:register' %}" class="btn btn-outline-warning small">Регистрация</a>
     <a href="{% url 'users:login' %}" class="btn btn-outline-success small">Вход</a>
+    <a href="{% url 'users:register' %}" class="btn btn-outline-warning small">Регистрация</a>
     <a href="{% url 'users:password_reset' %}" class="btn btn-outline-primary small">Восстановление пароля</a>
     {% endif %}
 </div>

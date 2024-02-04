@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from clients.models import Clients
 from mailing.models import Mailing
 
 
@@ -15,12 +16,13 @@ class IndexView(TemplateView):
     }
 
     def get_context_data(self, **kwargs):
-        pass
         """
-        Метод для получения рассылок.
+        Метод для вывода на главный экран информации.
         """
         context_data = super(IndexView, self).get_context_data(**kwargs)
-        context_data['object_list'] = Mailing.objects.all()
+        context_data['mailings'] = len(Mailing.objects.all())
+        context_data['active_mailings'] = len(Mailing.objects.filter(status_mailing='LAUNCHED'))
+        context_data['clients'] = len(Clients.objects.all())
 
         return context_data
 

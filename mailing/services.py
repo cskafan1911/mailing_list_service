@@ -35,8 +35,8 @@ def send_email(mailing):
                 logs.append(
                     f'Рассылка: {mailing.name}, Дата: {datetime.datetime.now()}, Клиент: {client.email}---Ошибка')
                 unsuccessful_answer += 1
-            save_log_of_mailing()
-            change_datetime_mailing(mailing, logs, success_answer, unsuccessful_answer)
+            save_log_of_mailing(mailing, logs, success_answer, unsuccessful_answer)
+            change_datetime_mailing(mailing)
     else:
         mailing.status_mailing = 'COMPLETED'
         mailing.save()
@@ -46,7 +46,6 @@ def change_datetime_mailing(mailing):
     """
     После отправки рассылки, меняет дату отправки в соответствии с периодичностью отправки.
     """
-    print('change_datetime_mailing')
     if mailing.frequency == 'HOUR':
         mailing.time_start = datetime.datetime.now() + datetime.timedelta(hours=1)
     elif mailing.frequency == 'WEEK':
@@ -60,7 +59,6 @@ def check_date_mailing(mailing):
     """
     Проверка даты и времени рассылки.
     """
-    print('check_date_mailing')
     utc = pytz.UTC
     now = datetime.datetime.now().replace(tzinfo=utc)
     if mailing.time_stop > now:
@@ -87,7 +85,6 @@ def send_mailings():
     """
     Функция для отправки готовых рассылок.
     """
-    print('send_mailings')
     utc = pytz.UTC
     now = datetime.datetime.now().replace(tzinfo=utc)
     mailings = Mailing.objects.filter(status_mailing='LAUNCHED').all()
@@ -112,10 +109,10 @@ def save_log_of_mailing(mailing, logs, success_answer, unsuccessful_answer):
     Функция сохраняет логи рассылки.
     """
     new_log = {
-        "datatime": datetime.datetime.now(),
+        "last_datetime": datetime.datetime.now(),
         "mailing": mailing,
-        "status": f"Success - {success_answer}, Unsuccessful - {unsuccessful_answer}",
-        "answer_mail_server": logs,
+        "attempt_status": f"Успешно - {success_answer}, Ошибка - {unsuccessful_answer}",
+        "mail_server_response": logs,
     }
 
     Log.objects.create(**new_log)
