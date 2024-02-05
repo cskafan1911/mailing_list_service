@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Почта</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Фамилия</th>
+        <th scope="col">Статус</th>
+        <th scope="col">Кнопка активации</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+    <tr>
+
+        <th scope="row">{{ object.user.pk }}</th>
+        <td>{{ object.user.email }}</td>
+        <td>{{ object.user.phone }}</td>
+        <td>{{ object.user.first_name }}</td>
+        <td>{{ object.user.last_name }}</td>
+        <td>{{ object.user.is_active }}</td>
+        <th>
+            {% if object.user.is_active %}
+            <a href="{% url 'users:user_activate' object.user.pk %}" type="button"
+               class="btn btn-danger">Заблокировать</a>
+            {% else %}
+            <a href="{% url 'users:user_activate' object.user.pk %}" type="btn btn-danger"
+               class="btn btn-success">Разблокировать</a>
+
+            {% endif %}
+        </th>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

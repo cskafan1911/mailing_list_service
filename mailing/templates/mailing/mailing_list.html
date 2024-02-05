@@ -16,7 +16,9 @@
     <tr>
 
         <th scope="row">{{ forloop.counter }}</th>
+        {% if perms.users.user_moderator_perm or object.user_creator%}
         <td><a href="{% url 'mailing:mailing_detail' object.pk %}">{{ object.name }}</a></td>
+        {% endif %}
         <td>{{ object.time_start }}</td>
         <td>{{ object.time_stop }}</td>
         <td>{{ object.frequency }}</td>

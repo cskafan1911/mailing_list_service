@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -105,3 +106,32 @@ class ProfileView(UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+@permission_required('users.user_moderator_perm')
+def user_moderation(request):
+    """
+    Функция для просмотра списка пользователей. Только для модератора.
+    """
+    users = Users.objects.all()
+    users_list = []
+    for user in users:
+        users_list.append({"user": user})
+    context = {
+        "object_list": users_list
+    }
+    return render(request, 'users/users_list.html', context)
+
+
+@permission_required('users.user_moderator_perm')
+def user_change_active(request, pk):
+    """
+    Функция для блокировки пользователя.
+    """
+    user = Users.objects.get(pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect(request.META.get('HTTP_REFERER'))

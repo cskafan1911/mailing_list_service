@@ -25,9 +25,3 @@ class IndexView(TemplateView):
         context_data['clients'] = len(Clients.objects.all())
 
         return context_data
-
-# def index(request):
-#     """
-#     Отображение главной страницы
-#     """
-#     return render(request, 'main/index.html')

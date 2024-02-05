@@ -12,7 +12,7 @@ from clients.models import Clients
 from log.models import Log
 from mailing.forms import MailingForm, MessageForm
 from mailing.models import Mailing, Message
-from mailing.services import check_status_mailing, send_email
+from mailing.services import check_status_mailing, send_email, send_mailings
 from users.models import Users
 
 
@@ -21,13 +21,17 @@ class MailingListView(ListView):
     Класс для вывода списка рассылок пользователя.
     """
     model = Mailing
+    permission_required = 'users.user_moderator_perm'
 
     def get_queryset(self):
         """
         Метод получает список рассылок пользователя.
         """
         queryset = super().get_queryset()
-        queryset = queryset.filter(user_creator=self.request.user)
+        if self.request.user.has_perm('users.user_moderator_perm'):
+            return queryset
+        else:
+            queryset = queryset.filter(user_creator=self.request.user)
 
         return queryset
 
@@ -87,7 +91,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         return context_data
 
 
-class MailingUpdateView(LoginRequiredMixin ,UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """
     Класс для редактирования рассылки.
     """
@@ -137,6 +141,16 @@ class MailingUpdateView(LoginRequiredMixin ,UpdateView):
 
         return context_data
 
+    def get_object(self, queryset=None):
+        """
+        Метод проверяет, может ли пользователь редактировать объект модели Products.
+        """
+        self.object = super().get_object()
+        if self.object.user_creator != self.request.user:
+            raise Http404('Вы можете смотреть и редактировать только свои рассылки!')
+
+        return self.object
+
 
 class MailingDetailView(DetailView):
     """
@@ -144,6 +158,7 @@ class MailingDetailView(DetailView):
     """
 
     model = Mailing
+    permission_required = 'users.user_moderator_perm'
 
     def get_context_data(self, **kwargs):
         """
@@ -157,6 +172,18 @@ class MailingDetailView(DetailView):
 
         return context_data
 
+    def get_object(self, queryset=None):
+        """
+        Метод проверяет, может ли пользователь редактировать объект модели Products.
+        """
+        self.object = super().get_object()
+        if self.request.user.has_perm('users.user_moderator_perm'):
+            return self.object
+        elif self.object.user_creator != self.request.user:
+            raise Http404('Вы можете смотреть и редактировать только свои рассылки!')
+
+        return self.object
+
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
     """
@@ -165,6 +192,17 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
 
     model = Mailing
     success_url = reverse_lazy('index')
+    permission_required = 'users.user_moderator_perm'
+
+    def get_object(self, queryset=None):
+        """
+        Метод проверяет, может ли пользователь редактировать объект модели Products.
+        """
+        self.object = super().get_object()
+        if self.object.user_creator != self.request.user:
+            raise Http404('Вы можете смотреть и редактировать только свои рассылки!')
+
+        return self.object
 
 
 def start_mailing(request, pk):
@@ -183,7 +221,7 @@ def stop_mailing(request, pk):
     Функция отключает рассылку.
     """
     mailing = Mailing.objects.get(pk=pk)
-    if mailing.user_creator == request.user:
+    if mailing.user_creator == request.user or request.user.has_perm('users.user_moderator_perm'):
         mailing.status = 'COMPLETED'
         mailing.save()
         return redirect(request.META.get('HTTP_REFERER'))
