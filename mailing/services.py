@@ -1,6 +1,7 @@
 import datetime
 
 import pytz
+from django.core.cache import cache
 from django.conf import settings
 from django.core.mail import send_mail
 
@@ -116,3 +117,19 @@ def save_log_of_mailing(mailing, logs, success_answer, unsuccessful_answer):
     }
 
     Log.objects.create(**new_log)
+
+
+def get_cache_objects_list(blogs):
+    """
+    Функция кеширования списка статей на главной странице.
+    """
+    key = 'blogs'
+    objects_list = cache.get(key)
+    if settings.CACHE_ENABLED:
+        if objects_list is None:
+            objects_list = blogs
+            cache.set(key, objects_list)
+    else:
+        objects_list = blogs
+
+    return objects_list

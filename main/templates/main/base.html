@@ -55,6 +55,7 @@
     <nav class="my-2 my-md-1 mr-md-3">
         <a href="{% url 'mailing:mailing_create' %}" class="p-2 text-dark">Создать рассылку</a>
         <a href="{% url 'mailing:mailing_list' %}" class="p-2 text-dark">Рассылки</a>
+        <a href="{% url 'blog:blog_list' %}" class="p-2 text-dark">Блог</a>
         <a href="{% url 'users:profile' %}" class="p-2 text-dark">Мой профиль</a>
         <a href="{% url 'users:logout' %}" class="p-2 text-dark">Выйти</a>
     </nav>
@@ -62,7 +63,6 @@
     <a href="{% url 'users:login' %}" class="btn btn-outline-success small">Вход</a>
     <a href="{% url 'users:register' %}" class="btn btn-outline-warning small">Регистрация</a>
     <a href="{% url 'users:password_reset' %}" class="btn btn-outline-primary small">Восстановление пароля</a>
-    <a href="{% url 'blog:blog_list' %}" class="p-2 text-dark">Блог</a>
     {% endif %}
     {% if perms.users.user_moderator_perm %}
     <a href="{% url 'users:user_moderation' %}" class="p-2 text-dark">Список пользователей</a>

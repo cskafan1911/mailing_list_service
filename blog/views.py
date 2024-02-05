@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, ListView
@@ -7,7 +7,7 @@ from blog.forms import BlogForm
 from blog.models import Blog
 
 
-class BlogCreateView(LoginRequiredMixin, CreateView):
+class BlogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """
     Класс для создания статей.
     """
@@ -15,9 +15,10 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
     model = Blog
     form_class = BlogForm
     success_url = reverse_lazy('blog:blog_list')
+    permission_required = 'blog.blog_custom_perm'
 
 
-class BlogUpdateView(LoginRequiredMixin, UpdateView):
+class BlogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
     Класс для редактирования статей.
     """
@@ -25,6 +26,7 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Blog
     form_class = BlogForm
     success_url = reverse_lazy('blog:blog_list')
+    permission_required = 'blog.blog_custom_perm'
 
 
 class BlogDetailView(DetailView):

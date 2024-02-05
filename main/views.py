@@ -1,8 +1,11 @@
+
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from blog.models import Blog
 from clients.models import Clients
 from mailing.models import Mailing
+from mailing.services import get_cache_objects_list
 
 
 class IndexView(TemplateView):
@@ -23,5 +26,6 @@ class IndexView(TemplateView):
         context_data['mailings'] = len(Mailing.objects.all())
         context_data['active_mailings'] = len(Mailing.objects.filter(status_mailing='LAUNCHED'))
         context_data['clients'] = len(Clients.objects.all())
+        context_data['blogs'] = get_cache_objects_list(Blog.objects.all())
 
         return context_data
