@@ -12,8 +12,7 @@ from clients.models import Clients
 from log.models import Log
 from mailing.forms import MailingForm, MessageForm
 from mailing.models import Mailing, Message
-from mailing.services import check_status_mailing, send_email, send_mailings
-from users.models import Users
+from mailing.services import check_status_mailing, send_email
 
 
 class MailingListView(ListView):
@@ -143,7 +142,7 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         """
-        Метод проверяет, может ли пользователь редактировать объект модели Products.
+        Метод проверяет, может ли пользователь редактировать объект модели Mailing.
         """
         self.object = super().get_object()
         if self.object.user_creator != self.request.user:
@@ -174,7 +173,7 @@ class MailingDetailView(DetailView):
 
     def get_object(self, queryset=None):
         """
-        Метод проверяет, может ли пользователь редактировать объект модели Products.
+        Метод проверяет, может ли пользователь редактировать объект модели Mailing.
         """
         self.object = super().get_object()
         if self.request.user.has_perm('users.user_moderator_perm'):
