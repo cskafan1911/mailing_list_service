@@ -30,6 +30,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_apscheduler',
+
+    'main',
+    'users',
+    'clients',
+    'mailing',
+    'log',
+    'blog',
+
 ]
 
 MIDDLEWARE = [
@@ -131,3 +141,16 @@ EMAIL_HOST_USER = os.getenv('YANDEX_MAIL')
 EMAIL_HOST_PASSWORD = os.getenv('MAIL_PASSWORD')
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
+
+AUTH_USER_MODEL = 'users.Users'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/users/'
+
+CACHE_ENABLED = True
+CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379",
+        }
+    }

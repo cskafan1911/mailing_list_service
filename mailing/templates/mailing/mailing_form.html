@@ -1,0 +1,79 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    <div class="row justify-content-lg-center">
+        <div class="col-3">
+            <div class="card small">
+                <div class="card-header">
+                    Создание рассылки
+                </div>
+                <div class="card-body">
+
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="footer">
+                        <button type="submit" class="btn btn-primary">
+                            {% if object %}
+                            Сохранить
+                            {% else %}
+                            Создать
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card small">
+                <div class="card-header">
+                    Сообщение рассылки
+                </div>
+                <div class="card-body">
+                    {{ message_formset.management_form }}
+                    {% for form in message_formset.forms %}
+                    {{ form.as_table }}
+                    {% if not forloop.last %}
+                    <hr>
+                    <div class="card-header">
+                        Сообщение рассылки
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card small">
+                <div class="card-header">
+                    Клиенты для рассылки
+                </div>
+                <div class="card-body">
+                    {{ clients_formset.management_form }}
+                    {% for form in clients_formset.forms %}
+                    <div class="card-header">
+                        Карточка клиента
+                    </div>
+                    {{ form.as_p }}
+                    {% if not forloop.last %}
+
+                    {% endif %}
+                    {% endfor %}
+
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="card shadow-sm">
+            <img class="card card-img-top"
+                 src="{{ object.image|mediapath }}"
+                 alt="Card image cap" width="100%" height="350">
+            <div class="card-body">
+                <h3 class="card-text">Запись {{ object.title }}</h3>
+                <h7 class="card-text">{{ object.content }}</h7>
+                {% if perms.blog.blog_custom_perm %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group mb-2">
+                        <a class="btn btn-sm btn-outline-warning"
+                           href="{% url 'blog:blog_update' object.pk %}">Изменить</a>
+                        <a class="btn btn-sm btn-outline-danger"
+                           href="{% url 'blog:blog_delete' object.pk %}">Удалить</a>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="card-text small">Количество просмотров: {{ object.view_count }}</div>
+                <div class="card-text small">Дата публикации: {{ object.date_of_publication }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
