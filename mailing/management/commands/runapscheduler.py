@@ -22,7 +22,7 @@ class Command(BaseCommand):
         scheduler.add_job(
             send_mailings,
             trigger=CronTrigger(second="*/30"),
-            id="send_ready_mailings",
+            id="send_mailings",
             max_instances=1,
             replace_existing=True,
         )
